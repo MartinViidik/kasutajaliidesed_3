@@ -36,6 +36,11 @@
         'render': function(){
           // Käivitame siis kui lehte laeme
           console.log('>>>>>loend');
+
+          // simulatsioon laeb kasutan
+          window.setTimeout(function(){
+            document.querySelector('.loading').innerHTML = 'laetud!';
+          }, 3000);
         }
       },
       'manage-view': {
@@ -52,6 +57,14 @@
         //Kuulan aadressirea vahetust
         window.addEventListener('hashchange', this.routeChange.bind(this));
 
+        if(!window.location.hash){
+          window.location.hash = 'home-view';
+        }else{
+                  this.routeChange();
+        }
+
+        //Kui refreshime lehte, ütleb mis lehel parasjagu oleme
+
         // Kuulame hiirekliki nupul
         this.bindMouseEvents();
 
@@ -64,16 +77,77 @@
       },
 
       addNewClick: function(event){
-        console.log(event);
-        this.click_count++;
-        console.log(this.click_count);
+        //salvestame purgi
+        //console.log(event);
+
+        var title = document.querySelector('.title').value;
+        var ingredients = document.querySelector('.ingredients').value;
+        console.log(title + ' ' + ingredients);
+
       },
 
       routeChange: function(event){
-        console.log(location.hash);
+        //Kirjutan muutujasse lehe nime, võtan maha #
+        this.currentRoute = location.hash.slice(1);
+        console.log(this.currentRoute);
 
+        if(this.routes[this.currentRoute]){
+
+          // muudan menüü lingi aktiivseks
+          this.updateMenu();
+
+          this.routes[this.currentRoute].render();
+
+        }else{
+          // 404 page not found
+        }
+
+        // Muudan menüü lingi aktiivseks
+        this.updateMenu();
+
+      },
+
+      updateMenu: function() {
+        // Võtan maha aktiivse menüülingi kui on
+        document.querySelector('.active-menu').className = document.querySelector('.active-menu').className.replace('active-menu',' ');
+
+        //Lisan uuele juurde
+        document.querySelector('.'+this.currentRoute).className += ' active-menu';
       }
 
+    }; // MOOSIPURGI LÕPP
+
+    var Jar = function(title, ingredients){
+      this.title = title;
+      this.ingredients = ingredients;
+      console.log('created new jar');
+    };
+
+    Jar.prototype = {
+      createHtmlElement: function(){
+
+        // võttes title ja ingredients ->
+
+
+        var li = document.createElement('li');
+
+        var span = document.createElement('span');
+        span.className = 'letter';
+        var letter = document.CreateTextNode(this.title.charAt(0));
+        span.appendChild(letter);
+
+        li.appendChild();
+
+        span_content = document.createElement('span');
+        span.className = 'content';
+        content = document.CreateTextNode(this.title + ' | '+ this.ingredients);
+        span.appendChild(content);
+
+        li.appendChild();
+
+        return li;
+
+      }
     };
 
     // Kui leht laetud, käivitan Moosipurgi rakenduse
