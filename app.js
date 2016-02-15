@@ -82,7 +82,18 @@
 
         var title = document.querySelector('.title').value;
         var ingredients = document.querySelector('.ingredients').value;
-        console.log(title + ' ' + ingredients);
+
+        //console.log(title + ' ' + ingredients);
+        // 1) tekitan uue purgi
+        if (title === "" && ingredients === ""){
+          console.log("Not inserting anything >:c");
+          window.alert("Tühjasi väljasi ei või jätta");
+        }else{
+        var new_jar = new Jar(title, ingredients);
+        // 2) lisan selle htmli listi juurde
+        var li = new_jar.createHtmlElement();
+        document.querySelector('.list-of-jars').appendChild(li);
+        }
 
       },
 
@@ -133,17 +144,17 @@
 
         var span = document.createElement('span');
         span.className = 'letter';
-        var letter = document.CreateTextNode(this.title.charAt(0));
+        var letter = document.createTextNode(this.title.charAt(0));
         span.appendChild(letter);
 
-        li.appendChild();
+        li.appendChild(span);
 
-        span_content = document.createElement('span');
+        var span = document.createElement('span');
         span.className = 'content';
-        content = document.CreateTextNode(this.title + ' | '+ this.ingredients);
+        var content = document.createTextNode(this.title + ' | '+ this.ingredients);
         span.appendChild(content);
 
-        li.appendChild();
+        li.appendChild(span);
 
         return li;
 
