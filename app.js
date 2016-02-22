@@ -19,6 +19,9 @@
       this.click_count = 0;
       console.log(this);
 
+      // Hakkan hoidma kõiki purke siin
+      this.jars = [];
+
       // Kui tahan moosipurgile referenci siis kasutan THIS = MOOSIPURGI RAKENDUS ISE
       this.init();
     };
@@ -63,16 +66,32 @@
                   this.routeChange();
         }
 
+        //Saan kätte purgid localstorage kui on
+        if(localStorage.jars){
+          //Võtan stringi ja teen tagasi objektideks
+          this.jars = JSON.parse(localStorage.jars);
+          console.log('laadisin localStorageist massiivi' + this.jars.length);
+
+          //Tekitan loendi htmli
+          this.jars.forEach(function(jar){
+
+            var new_jar = new Jar(jar.title, jar.ingredients);
+
+            var li = new_jar.createHtmlElement();
+            document.querySelector('.list-of-jars').appendChild(li);
+          });
+        }
+
         //Kui refreshime lehte, ütleb mis lehel parasjagu oleme
 
         // Kuulame hiirekliki nupul
-        this.bindMouseEvents();
+        this.bindEvents();
 
 
 
       },
 
-      bindMouseEvents: function(){
+      bindEvents: function(){
         document.querySelector('.add-new-jar').addEventListener('click', this.addNewClick.bind(this));
       },
 
@@ -90,6 +109,13 @@
           window.alert("Tühjasi väljasi ei või jätta");
         }else{
         var new_jar = new Jar(title, ingredients);
+
+        // lisan massiivi purgi
+        this.jars.push(new_jar);
+        console.log(JSON.stringify(this.jars));
+        //JSON'i stringina salvestan localStorage'isse
+        localStorage.setItem('jars',JSON.stringify(this.jars));
+
         // 2) lisan selle htmli listi juurde
         var li = new_jar.createHtmlElement();
         document.querySelector('.list-of-jars').appendChild(li);
