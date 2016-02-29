@@ -69,25 +69,59 @@
         //Saan kätte purgid localstorage kui on
         if(localStorage.jars){
           //Võtan stringi ja teen tagasi objektideks
-          this.jars = JSON.parse(localStorage.jars);
-          console.log('laadisin localStorageist massiivi' + this.jars.length);
+          //this.jars = JSON.parse(localStorage.jars);
+          //console.log('laadisin localStorageist massiivi' + this.jars.length);
+          this.createListFromArray(JSON.parse(localStorage.jars));
+          console.log('laadisin localStorageist');
 
-          //Tekitan loendi htmli
+        }else{
+          // ei olnud olemas, teen päringu serverisse
+
+          var xhttp = new XMLHttpRequest();
+          // vahetub siis kui toimub muutus ühenduses
+          xhttp.onreadystatechange = function() {
+
+            console.log(xhttp.readyState);
+
+            //fail jõudis tervenisti kohale, edukalt
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+              var result = JSON.parse(xhttp.responseText);
+              console.log(result);
+
+              // NB saab viidata moosipurgile ka moosipurk.instance
+
+              Moosipurk.instance.createListFromArray(result);
+              console.log('laadisin serverist');
+
+            }
+          };
+          // päringu tegemine
+          xhttp.open("GET", "saveData.php", true);
+          xhttp.send();
+
+        }
+
+        //Kui refreshime lehte, ütleb mis lehel parasjagu oleme
+
+
+      },
+
+      createListFromArray: function(arrayOfObjects){
+          this.jars = arrayOfObjects;
+
+          //tekitan loendi html'i
           this.jars.forEach(function(jar){
 
             var new_jar = new Jar(jar.title, jar.ingredients);
 
             var li = new_jar.createHtmlElement();
             document.querySelector('.list-of-jars').appendChild(li);
+
           });
-        }
 
-        //Kui refreshime lehte, ütleb mis lehel parasjagu oleme
-
-        // Kuulame hiirekliki nupul
-        this.bindEvents();
-
-
+          // Kuulame hiirekliki nupul
+          this.bindEvents();
 
       },
 
@@ -145,6 +179,19 @@
         //JSON'i stringina salvestan localStorage'isse
         localStorage.setItem('jars',JSON.stringify(this.jars));
 
+        //salvestan serverisse
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadyatstatechange = function(){
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+
+          console.log('laadisin serverist');
+
+        }
+      };
+        // päringu tegemine
+          xhttp.open("GET", "saveData.php?title="+title+"&ingredients=" +ingredients, true);
+          xhttp.send();
+
         // 2) lisan selle htmli listi juurde
         var li = new_jar.createHtmlElement();
         document.querySelector('.list-of-jars').appendChild(li);
@@ -198,14 +245,14 @@
         var li = document.createElement('li');
 
         var span = document.createElement('span');
-        span.className = 'letter';
+        span.classtitle = 'letter';
         var letter = document.createTextNode(this.title.charAt(0));
         span.appendChild(letter);
 
         li.appendChild(span);
 
         var span = document.createElement('span');
-        span.className = 'content';
+        span.classtitle = 'content';
         var content = document.createTextNode(this.title + ' | '+ this.ingredients);
         span.appendChild(content);
 
